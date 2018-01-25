@@ -4,14 +4,19 @@ const express = require('express');
 const socketIO = require('socket.io');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
 
-io.on('connection', function(socket) {
-    socketIO.on('*', function(packet){
-        // client.emit('foo', 'bar', 'baz')
-        packet.data === ['foo', 'bar', 'baz']
-    });
+const server = express()
+    .use((req, res) => res.sendFile(INDEX) )
+    .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+    console.log('Client connected');
+    socket.on('disconnect', () => console.log('Client disconnected'));
+    socket.on('chat message', (msg)=> (io.emit('chat message', msg)));
 });
 
-io.listen(PORT);
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
