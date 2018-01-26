@@ -24,7 +24,7 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     $(function () {
-        var socket = io();
+        var socket = io('https://stark-dusk-92702.herokuapp.com');
         var el = document.getElementById('server-time');
         $('form').submit(function(){
             socket.emit('chat message', $('#m').val());
